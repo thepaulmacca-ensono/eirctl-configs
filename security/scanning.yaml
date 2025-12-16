@@ -1,4 +1,3 @@
-# This template provides
 contexts:
   yamllint:
     container:
