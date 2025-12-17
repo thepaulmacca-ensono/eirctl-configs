@@ -14,7 +14,9 @@ contexts:
   tf:tflint:
     container:
       name: ghcr.io/terraform-linters/tflint:v0.60.0
-      entrypoint: /usr/bin/sh -c
+      entrypoint: /usr/bin/sh
+      shell_args:
+        - -c
     envfile:
       exclude:
         - PATH
