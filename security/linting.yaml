@@ -1,0 +1,21 @@
+contexts:
+  powershell:
+    container:
+      name: ensono/eir-infrastructure
+      shell: pwsh
+      shell_args:
+        - -Command
+    envfile:
+      exclude:
+        - sourceversionmessage
+        - posh_azure_subscription
+
+tasks:
+  lint:yaml:
+    context: powershell
+    description: |
+      Perform YAML Linting using Yamllint
+
+      By default the utility uses `yamllint.conf` in the current directory
+    command:
+      - Invoke-YamlLint -FailOnWarnings $False

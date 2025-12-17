@@ -1,129 +1,100 @@
 contexts:
-  tf:
+  powershell:
     container:
-      name: public.ecr.aws/hashicorp/terraform:1.14.2
-      entrypoint: /usr/bin/env
-      container_args:
-        - -v ~/.ssh:/root/.ssh
-        - -v ~/.aws:/root/.aws
-        - -v ~/.azure:/root/.azure
-    envfile:
-      exclude:
-        - PATH
-        - HOME
-
-  tf:tflint:
-    container:
-      name: ghcr.io/terraform-linters/tflint:v0.60.0
-      entrypoint: ""
-      shell: /bin/sh
+      name: ensono/eir-infrastructure
+      shell: pwsh
       shell_args:
-        - -c
+        - -Command
     envfile:
       exclude:
-        - PATH
-        - HOME
-
-  tf:docs:
-    container:
-      name: quay.io/terraform-docs/terraform-docs:0.19.0
-      entrypoint: /usr/bin/env
-    envfile:
-      exclude:
-        - PATH
-        - HOME
+        - sourceversionmessage
+        - posh_azure_subscription
 
 tasks:
-  tf:lint:format:
-    context: tf
-    description: |
-      Perform Terraform Format Check
-
-      If you want to run the correction locally upon a CI failure
-
-      `eirctl run tf:lint:format -- -additional-flag`
+  lint:terraform:format:
+    context: powershell
+    description: Perform Terraform Format Check
     command:
-      - terraform fmt -diff -recursive {{ if .ArgsList }}{{ .Args }}{{ end }} ${TF_DIR}
-    required:
-      env:
-        - TF_DIR
+      - |
+        tenv tf list
+        terraform version
 
-  tf:lint:validate:
-    context: tf
+        Invoke-Terraform -Format -Path $env:TF_FILE_LOCATION -Debug
+
+  lint:terraform:validate:
+    context: powershell
     description: Perform Terraform Validation
     command:
       - |
-        terraform -chdir=${TF_DIR} init -backend=false
-        terraform -chdir=${TF_DIR} validate
-    required:
-      env:
-        - TF_DIR
+        tenv tf list
+        terraform version
 
-  tf:lint:tflint:
-    context: tf:tflint
-    description: |
-      Perform Terraform Linting using TFLint
+        Invoke-Terraform -Validate -Path $env:TF_FILE_LOCATION
 
-      By default the utility uses `.tflint.hcl` in the current directory
-    command:
-      - tflint --init && tflint --chdir=${TF_DIR}
-    required:
-      env:
-        - TF_DIR
-
-  tf:test:unit:
-    context: tf
-    description: Perform Terraform Unit Tests
-    command:
-      - terraform -chdir=${TF_DIR} test {{ if .ArgsList }}{{ .Args }}{{ end }}
-    required:
-      env:
-        - TF_DIR
-
-  tf:init:
-    context: tf
-    description: Perform Terraform Init
-    command:
-      - terraform -chdir=${TF_DIR} init -input=false {{ if .ArgsList }}{{ .Args }}{{ end }}
-    required:
-      env:
-        - TF_DIR
-
-  tf:plan:
-    description: |
-      Perform Terraform Plan
-
-      Generates the plan in the TF_DIR under a file named `tfplan`
-    context: tf
+  lint:terraform:tflint:
+    context: powershell
+    description: Perform Terraform Linting using TFLint
     command:
       - |
-        terraform -chdir=${TF_DIR} workspace select -or-create ${WORKSPACE:-$ENV_NAME}
-        terraform -chdir=${TF_DIR} plan -out=tfplan -input=false {{ if .ArgsList }}{{ .Args }}{{ end }}
-    required:
-      env:
-        - TF_DIR
-        - WORKSPACE
+        tflint --version
+        Write-Host ("Path: {0}" -f $env:TF_FILE_LOCATION)
 
-  tf:apply:
-    context: tf
-    description: |
-      Perform Terraform Apply
+        tflint --init
+        tflint --chdir=$env:TF_FILE_LOCATION
 
-      Applies the previously generated plan named `tfplan` in the TF_DIR
+  terraform:init:
+    context: powershell
+    description: Initialise Terraform
+    command: |
+      Invoke-Terraform -Init -Arguments $env:TF_BACKEND_INIT -Path $env:TF_FILE_LOCATION -Debug
+
+      Invoke-Terraform -Workspace -Arguments $env:ENV_NAME -Path $env:TF_FILE_LOCATION -Debug
+
+  terraform:plan:
+    context: powershell
+    description: Terraform Plan
     command:
       - |
-        terraform -chdir=${TF_DIR} workspace select -or-create ${WORKSPACE:-$ENV_NAME}
-        terraform -chdir=${TF_DIR} apply -auto-approve -input=false tfplan
-    required:
-      env:
-        - TF_DIR
-        - WORKSPACE
+        $arguments = @("-input=false", "-out=`"deploy.tfplan`"")
+        if ($env:WORKSPACE_VARS_FILE) {
+          $arguments += "--var-file=$env:WORKSPACE_VARS_FILE"
+        }
+        Invoke-Terraform -Plan -Path $env:TF_FILE_LOCATION -Arguments $arguments
+
+  terraform:apply:
+    context: powershell
+    description: Apply Terraform Plan
+    command: |
+      Push-Location $env:TF_FILE_LOCATION
+
+      Invoke-Terraform -Apply -Path deploy.tfplan -Debug
+
+      terraform output -json | Set-Content -Path ./tfoutputs.json -Force
+
+  terraform:destroy:plan:
+    context: powershell
+    description: Terraform Destroy Plan
+    command:
+      - |
+        $arguments = @("-destroy", "-input=false", "-out=`"destroy.tfplan`"")
+        if ($env:WORKSPACE_VARS_FILE) {
+          $arguments += "--var-file=$env:WORKSPACE_VARS_FILE"
+        }
+        Invoke-Terraform -Plan -Path $env:TF_FILE_LOCATION -Arguments $arguments -debug
+
+  terraform:destroy:apply:
+    context: powershell
+    description: Terraform Destroy Apply
+    command:
+      - Push-Location $env:TF_FILE_LOCATION && Invoke-Terraform -Apply -Path destroy.tfplan -Debug
 
   doc:terraform:generate:
-    context: tf:docs
-    description: Generates Documentation for a module. Must supply a TF_DIR environment variable.
+    context: powershell
+    description: Generate Terraform Module Documentation
     command:
-      - terraform-docs --output-file README.md markdown ${TF_DIR}
-    required:
-      env:
-        - TF_DIR
+      - |
+        terraform-docs --version
+        terraform-docs $env:TF_FILE_LOCATION
+
+        git config --global --add safe.directory "/app"
+        git diff --exit-code . ":(exclude)$env:TF_FILE_LOCATION/.terraform.lock.hcl"
