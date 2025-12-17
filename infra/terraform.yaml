@@ -6,6 +6,7 @@ contexts:
       container_args:
         - -v ~/.ssh:/root/.ssh
         - -v ~/.aws:/root/.aws
+        - -v ~/.azure:/root/.azure
     envfile:
       exclude:
         - PATH
