@@ -10,6 +10,17 @@ contexts:
         - which_declare
         - BASH_FUNC_
 
+  checkov:
+    container:
+      name: bridgecrew/checkov:3.2.495
+      shell: /usr/bin/sh
+      shell_args:
+        - -c
+    envfile:
+      exclude:
+        - PATH
+        - HOME
+
   trufflehog:
     container:
       name: mirror.gcr.io/trufflesecurity/trufflehog:3.89.2
@@ -18,7 +29,7 @@ contexts:
         - "-v ~/.ssh:/root/.ssh"
         - "${EIRCTL_CONTAINER_ARG}"
 
-  trivy:container:
+  trivy:
     container:
       name: public.ecr.aws/aquasecurity/trivy:0.67.0
       entrypoint: /usr/bin/env
@@ -41,14 +52,26 @@ tasks:
   lint:yaml:
     context: yamllint
     description: |
-      Perform YAML Linting pass additiona arguments via -- stdin
+      Perform YAML Linting pass additional arguments via -- stdin
 
-      By default the utility uses `yamllint.conf` in the current dire
+      By default the utility uses `yamllint.conf` in the current directory
     command:
       - yamllint -s -c {{ or (index . "YamlLintConf") "yamllint.conf" }} . {{ .Args }}
 
+  checkov:terraform:scan:
+    context: checkov
+    description: |
+      Perform Terraform Static Code Analysis using Checkov
+
+      Generates both console and junitxml reports
+    command:
+      - checkov -d ${TF_DIR} -o cli -o junitxml --output-file-path console,terraform_results.xml
+    required:
+      env:
+        - TF_DIR
+
   trivy:file:system:scan:
-    context: trivy:container
+    context: trivy
     description: |
       Run Trivy vulnerability scan for the file system
 
@@ -58,7 +81,7 @@ tasks:
         trivy filesystem --format table --scanners vuln,secret,misconfig,license --show-suppressed --exit-code=1 --ignorefile .trivyignore.yaml --severity HIGH,CRITICAL . {{ if .ArgsList }}{{ .Args }}{{ end }}
 
   trivy:file:system:sbom:
-    context: trivy:container
+    context: trivy
     description: |
       Run Trivy vulnerability SBOM scan for the file system
 
@@ -70,7 +93,7 @@ tasks:
         trivy sbom --ignorefile .trivyignore.yaml --show-suppressed --exit-code 1 --format table .trivy/fs-sbom-file.json
 
   trivy:container:scan:
-    context: trivy:container
+    context: trivy
     description: |
       Run Trivy vulnerability scan for docker container
 
@@ -84,7 +107,7 @@ tasks:
         - EXTRA_TAGS
 
   trivy:container:sbom:
-    context: trivy:container
+    context: trivy
     description: |
       Run Trivy vulnerability sbom scan
 
