@@ -13,6 +13,7 @@ contexts:
   checkov:
     container:
       name: bridgecrew/checkov:3.2.495
+      entrypoint: /usr/bin/env
       shell: /usr/bin/sh
       shell_args:
         - -c
