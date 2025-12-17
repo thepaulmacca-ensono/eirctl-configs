@@ -83,7 +83,7 @@ tasks:
     context: tf
     description: Perform Terraform Init
     command:
-      - terraform -chdir=${TF_DIR} init -input=false -backend=false {{ if .ArgsList }}{{ .Args }}{{ end }}
+      - terraform -chdir=${TF_DIR} init -input=false {{ if .ArgsList }}{{ .Args }}{{ end }}
     required:
       env:
         - TF_DIR
