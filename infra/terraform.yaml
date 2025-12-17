@@ -11,6 +11,15 @@ contexts:
         - PATH
         - HOME
 
+  tf:tflint:
+    container:
+      name: ghcr.io/terraform-linters/tflint:v0.60.0
+      entrypoint: /usr/bin/env
+    envfile:
+      exclude:
+        - PATH
+        - HOME
+
   tf:docs:
     container:
       name: quay.io/terraform-docs/terraform-docs:0.19.0
@@ -43,6 +52,19 @@ tasks:
       - |
         terraform -chdir=${TF_DIR} init -backend=false
         terraform -chdir=${TF_DIR} validate
+    required:
+      env:
+        - TF_DIR
+
+  tf:lint:tflint:
+    context: tf:tflint
+    description: |
+      Perform Terraform Linting using TFLint
+
+      By default the utility uses `.tflint.hcl` in the current directory
+    command:
+        tflint --init
+        tflint -chdir=${TF_DIR}
     required:
       env:
         - TF_DIR
