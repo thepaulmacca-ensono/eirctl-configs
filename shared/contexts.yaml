@@ -3,7 +3,7 @@ contexts:
     container:
       name: ensono/eir-infrastructure
       container_args:
-        - -v ~/.azure:/root/.azure
+        - -v ~/.azure-container:/root/.azure
       shell: pwsh
       shell_args:
         - -Command
