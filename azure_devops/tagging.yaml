@@ -3,7 +3,7 @@
 tasks:
   ado:git:tag:
     context: powershell
-    description: Tag a Commit
+    description: Tag a Commit in Azure DevOps
     command:
       - |
         git config --global --add safe.directory "/eirctl"
@@ -15,7 +15,7 @@ tasks:
 
   ado:git:release:tag:
     context: powershell
-    description: Tag a Commit for Release
+    description: Tag a Commit in Azure DevOps for Release
     command:
       - |
         git config --global --add safe.directory "/eirctl"

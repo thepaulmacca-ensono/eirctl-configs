@@ -1,9 +1,18 @@
 # Pipelines Tasks
 
 tasks:
+  ado:buildnumber:
+    context: powershell
+    description: Update the Build Number in Azure DevOps
+    command:
+      - Update-BuildNumber
+
   ado:retain:pipeline:
     context: powershell
-    description: Retain a Pipeline run for a configurable number of years
+    description: |
+      Retain an Azure DevOps pipeline run for a configurable number of years
+
+      Set to 365 days (1 year) by default
     command:
       - |
         $retentionYears = [int]$env:RETENTION_YEARS

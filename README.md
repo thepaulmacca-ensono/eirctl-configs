@@ -41,6 +41,9 @@ import:
   - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/security/scanning.yaml
 ```
 
+> [!TIP]
+> To prevent breaking changes, pin to a specific version by replacing `main` with a release tag (e.g., `v0.1.0`).
+
 Or clone locally:
 
 ```bash
@@ -73,37 +76,38 @@ eirctl run github:git:tag
 
 | Task | Description |
 |------|-------------|
-| `lint:terraform:format` | Check Terraform formatting |
-| `lint:terraform:validate` | Validate Terraform configuration |
-| `lint:terraform:tflint` | Run TFLint static analysis |
-| `terraform:init` | Initialize Terraform with backend config |
-| `terraform:plan` | Generate Terraform execution plan |
-| `terraform:apply` | Apply Terraform plan |
-| `terraform:destroy:plan` | Generate destroy plan |
-| `terraform:destroy:apply` | Apply destroy plan |
-| `terraform:ado:outputs` | Export outputs to ADO variable groups |
-| `doc:terraform:generate` | Generate Terraform documentation |
+| `lint:terraform:format` | Perform Terraform Format Check |
+| `lint:terraform:validate` | Perform Terraform Validation |
+| `lint:terraform:tflint` | Perform Terraform Linting using TFLint |
+| `terraform:init` | Initialise Terraform |
+| `terraform:plan` | Terraform Plan |
+| `terraform:apply` | Apply Terraform Plan |
+| `terraform:destroy:plan` | Terraform Destroy Plan |
+| `terraform:destroy:apply` | Terraform Destroy Apply |
+| `terraform:ado:outputs` | Get Terraform Outputs for ADO Variable Group Import |
+| `doc:terraform:generate` | Generate Terraform Module Documentation |
 
 ### Security (`security/`)
 
 | Task | Description |
 |------|-------------|
-| `lint:yaml` | YAML linting with yamllint |
-| `scan:terraform:checkov` | Terraform security scanning with Checkov |
+| `lint:yaml` | Perform YAML Linting using Yamllint |
+| `scan:terraform:checkov` | Perform Terraform Static Code Analysis using Checkov |
 
 ### Azure DevOps (`azure_devops/`)
 
 | Task | Description |
 |------|-------------|
-| `ado:retain:pipeline` | Retain pipeline runs for a specified period |
-| `ado:git:tag` | Tag a commit with service name and build number |
-| `ado:git:release:tag` | Tag a commit for release |
+| `ado:buildnumber` | Update the Build Number in Azure DevOps |
+| `ado:retain:pipeline` | Retain an Azure DevOps pipeline run for a configurable number of years |
+| `ado:git:tag` | Tag a Commit in Azure DevOps |
+| `ado:git:release:tag` | Tag a Commit in Azure DevOps for Release |
 
 ### GitHub (`github/`)
 
 | Task | Description |
 |------|-------------|
-| `github:git:tag` | Tag a commit with service name and run number |
+| `github:git:tag` | Tag a Commit in GitHub |
 
 ## Configuration
 

@@ -3,7 +3,7 @@
 tasks:
   github:git:tag:
     context: powershell
-    description: Tag a Commit
+    description: Tag a Commit in GitHub
     command:
       - |
         git config --global --add safe.directory "/app"
