@@ -2,6 +2,8 @@ contexts:
   powershell:
     container:
       name: ensono/eir-infrastructure
+      container_args:
+        - -v ~/.azure:/root/.azure
       shell: pwsh
       shell_args:
         - -Command
