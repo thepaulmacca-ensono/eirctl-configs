@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ['Lint and Test']
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  set-version-tag:
+    if: ${{ github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+    steps:
+      - uses: actions/checkout@v5
+      # get version
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.0
+        with:
+          versionSpec: '5.x'
+      - name: Set SemVer Version
+        uses: gittools/actions/gitversion/execute@v3.0
+        id: gitversion
+
+  release:
+    runs-on: ubuntu-latest
+    needs: set-version-tag
+    env:
+      SEMVER: ${{ needs.set-version-tag.outputs.semVer }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Set up git for tag pushing
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.email ${{ github.actor }}-ci@gha.org
+          git config user.name ${{ github.actor }}
+
+      - name: Tag repo
+        run: |
+          echo "REVISION  -> $GITHUB_SHA"
+          echo "VERSION -> $GITVERSION_SEMVER"
+          git tag -a "v${SEMVER}" -m "ci tag release" $GITHUB_SHA
+          git push origin "v${SEMVER}"
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.set-version-tag.outputs.semVer }}
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false

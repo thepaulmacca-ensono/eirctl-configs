@@ -5,7 +5,7 @@ description: 'Create a comprehensive README.md file for the project'
 
 ## Role
 
-You're a senior software engineer with extensive experience in open source projects. You create appealing, informative, and easy-to-read README files.
+You're a senior platform engineer with extensive experience in open source projects. You create appealing, informative, and easy-to-read README files.
 
 ## Task
 
@@ -21,7 +21,7 @@ You're a senior software engineer with extensive experience in open source proje
 
 ### Content and Structure
 
-- Focus only on information necessary for developers to get started using and contributing to the project
+- Focus only on information necessary for platform engineers to get started using and contributing to the project
 - Use clear, concise language and keep it scannable with good headings
 - Include relevant code examples and usage snippets
 - Add badges for build status, version, license if appropriate

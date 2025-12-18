@@ -1,6 +1,9 @@
 # Eirctl Configuration Files
 
-A curated collection of reusable task configurations for [eirctl](https://github.com/ensono/eirctl) - enabling streamlined CI/CD workflows across Azure DevOps and GitHub pipelines.
+[![Lint and Test](https://github.com/thepaulmacca-ensono/eirctl-configs/actions/workflows/pr.yml/badge.svg)](https://github.com/thepaulmacca-ensono/eirctl-configs/actions/workflows/pr.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Reusable task configurations for [eirctl](https://github.com/Ensono/eirctl) - enabling streamlined CI/CD workflows across Azure DevOps and GitHub pipelines.
 
 ## What is this?
 
@@ -15,31 +18,30 @@ A curated collection of reusable task configurations for [eirctl](https://github
 ## Features
 
 - 🔧 **Ready-to-use tasks** - Drop-in configurations for common DevOps workflows
-- 🐳 **Containerized execution** - Tasks run in the `ensono/eir-infrastructure` container for consistent environments
+- 🐳 **Containerized execution** - Tasks run in the `ensono/eir-infrastructure` container
 - 🔄 **Multi-platform support** - Configurations for both Azure DevOps and GitHub Actions
-- 📦 **Modular design** - Import only what you need from organized YAML files
-- 🛡️ **Security-focused** - Built-in scanning and linting tasks
+- 📦 **Modular design** - Import only what you need
 
 ## Getting Started
 
 ### Prerequisites
 
-- [eirctl](https://github.com/ensono/eirctl) installed
+- [eirctl](https://github.com/Ensono/eirctl/blob/main/docs/installation.md) installed
 - Docker (for containerized task execution)
 - Azure CLI credentials (for Azure-related tasks)
 
 ### Installation
 
-Reference the configuration files directly in your `eirctl` configuration by importing them from this repository:
+Import configurations directly from this repository in your `eirctl.yaml`:
 
 ```yaml
-imports:
+import:
+  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/shared/contexts.yaml
   - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/infra/terraform.yaml
   - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/security/scanning.yaml
-  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/shared/contexts.yaml
 ```
 
-Or clone the repository and reference local files:
+Or clone locally:
 
 ```bash
 git clone https://github.com/thepaulmacca-ensono/eirctl-configs.git
@@ -47,20 +49,22 @@ git clone https://github.com/thepaulmacca-ensono/eirctl-configs.git
 
 ### Usage
 
-Once imported, you can run tasks using `eirctl`:
+Once imported, run tasks using `eirctl`:
 
 ```bash
-# Run Terraform format check
+# Terraform operations
 eirctl run lint:terraform:format
-
-# Run Terraform plan
 eirctl run terraform:plan
+eirctl run terraform:apply
 
-# Run security scanning with Checkov
+# Security scanning
 eirctl run scan:terraform:checkov
 
-# Tag a commit in Azure DevOps
+# Git tagging (Azure DevOps)
 eirctl run ado:git:tag
+
+# Git tagging (GitHub)
+eirctl run github:git:tag
 ```
 
 ## Available Tasks
@@ -105,7 +109,7 @@ eirctl run ado:git:tag
 
 ### Environment Variables
 
-Tasks use environment variables for configuration. Common variables include:
+Common variables used by tasks:
 
 | Variable | Description |
 |----------|-------------|
@@ -116,9 +120,9 @@ Tasks use environment variables for configuration. Common variables include:
 | `ADO_ACCESS_TOKEN` | Azure DevOps personal access token |
 | `ADO_ORGANISATION` | Azure DevOps organization name |
 
-### Contexts
+### Execution Context
 
-The shared context (`shared/contexts.yaml`) defines execution environments:
+Tasks use the shared PowerShell context (`shared/contexts.yaml`) which runs commands in the `ensono/eir-infrastructure` container:
 
 ```yaml
 contexts:
@@ -128,11 +132,13 @@ contexts:
       container_args:
         - -v ~/.azure-container:/root/.azure
       shell: pwsh
+      shell_args:
+        - -Command
 ```
 
 ## Project Structure
 
-```
+```text
 eirctl-configs/
 ├── azure_devops/       # Azure DevOps specific tasks
 │   ├── pipelines.yaml  # Pipeline management tasks
@@ -144,19 +150,20 @@ eirctl-configs/
 ├── security/           # Security and quality tasks
 │   ├── linting.yaml    # Code linting tasks
 │   └── scanning.yaml   # Security scanning tasks
-└── shared/             # Shared configurations
-    └── contexts.yaml   # Execution contexts
+├── shared/             # Shared configurations
+│   └── contexts.yaml   # Execution contexts
+└── test/               # Validation test configs
+    └── eirctl.yaml     # Combined config for CI validation
 ```
 
-## Support
+## Getting Help
 
-- 📖 [eirctl Documentation](https://github.com/ensono/eirctl)
+- 📖 [eirctl Documentation](https://github.com/Ensono/eirctl)
 - 🐛 [Report Issues](https://github.com/thepaulmacca-ensono/eirctl-configs/issues)
-- 💬 [Discussions](https://github.com/thepaulmacca-ensono/eirctl-configs/discussions)
 
 ## Contributing
 
-Contributions are welcome! Please read the contribution guidelines before submitting pull requests.
+Contributions are welcome! Please:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/new-task`)
@@ -166,4 +173,4 @@ Contributions are welcome! Please read the contribution guidelines before submit
 
 ## License
 
-See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

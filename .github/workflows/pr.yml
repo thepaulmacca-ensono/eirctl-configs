@@ -1,0 +1,54 @@
+name: Lint and Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.yaml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Run yamllint
+        run: yamllint -c yamllint.conf .
+
+  test:
+    name: Test
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install eirctl
+        run: |
+          curl -L https://github.com/Ensono/eirctl/releases/latest/download/eirctl-linux-amd64 -o eirctl
+          chmod +x eirctl
+          sudo mv eirctl /usr/local/bin/
+
+      - name: Validate eirctl configuration files
+        run: |
+          echo "Validating eirctl configuration files..."
+          eirctl validate --config test/eirctl.yaml
+          echo "All eirctl configuration files are valid."

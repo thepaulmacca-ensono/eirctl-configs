@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Ensono/eirctl/refs/heads/main/schemas/schema_v1.json
+
+import:
+  - ../shared/contexts.yaml
+  - ../azure_devops/pipelines.yaml
+  - ../azure_devops/tagging.yaml
+  - ../github/tagging.yaml
+  - ../infra/terraform.yaml
+  - ../security/linting.yaml
+  - ../security/scanning.yaml
