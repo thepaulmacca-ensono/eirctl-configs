@@ -1,0 +1,26 @@
+# Tagging Tasks
+
+tasks:
+  ado:git:tag:
+    context: powershell
+    description: Tag a Commit
+    command:
+      - |
+        git config --global --add safe.directory "/eirctl"
+        $tagName = ("{0}-{1}" -f $env:SERVICE_NAME, $env:BUILD_BUILDNUMBER)
+        $urlPath = [System.Uri]::EscapeDataString(("{0}/{1}/_git/{2}" -f $env:ADO_ORGANISATION, $env:SYSTEM_TEAMPROJECT, $env:BUILD_REPOSITORY_NAME))
+        git tag $tagName $env:BUILD_SOURCEVERSION
+        git remote set-url origin ("https://{0}@dev.azure.com/{1}/" -f $env:ADO_ACCESS_TOKEN, $urlPath)
+        git push origin $tagName
+
+  ado:git:release:tag:
+    context: powershell
+    description: Tag a Commit for Release
+    command:
+      - |
+        git config --global --add safe.directory "/eirctl"
+        $tagName = ("{0}-{1}-release" -f $env:SERVICE_NAME, $env:BUILD_BUILDNUMBER)
+        $urlPath = [System.Uri]::EscapeDataString(("{0}/{1}/_git/{2}" -f $env:ADO_ORGANISATION, $env:SYSTEM_TEAMPROJECT, $env:BUILD_REPOSITORY_NAME))
+        git tag $tagName $env:BUILD_SOURCEVERSION
+        git remote set-url origin ("https://{0}@dev.azure.com/{1}/" -f $env:ADO_ACCESS_TOKEN, $urlPath)
+        git push origin $tagName

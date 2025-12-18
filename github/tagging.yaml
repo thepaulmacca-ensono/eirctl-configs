@@ -1,0 +1,12 @@
+# Tagging Tasks
+
+tasks:
+  github:git:tag:
+    context: powershell
+    description: Tag a Commit
+    command:
+      - |
+        git config --global --add safe.directory "/app"
+        $tagName = ("{0}-{1}.{2}" -f $env:SERVICE_NAME, $(Get-Date -Format "yyyy.MM.dd"), $env:GITHUB_RUN_NUMBER)
+        git tag $tagName $env:GITHUB_SHA
+        git push origin $tagName
