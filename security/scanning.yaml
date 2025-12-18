@@ -14,4 +14,4 @@ tasks:
           pip3 -q install -U checkov==$env:checkov_version
         }
 
-        checkov -d $env:TF_FILE_LOCATION -o cli -o junitxml --output-file-path console,terraform_results.xml
+        checkov -d $env:TF_FILE_LOCATION -o cli -o junitxml --output-file-path console,results.xml
