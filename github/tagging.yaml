@@ -2,7 +2,7 @@
 
 tasks:
   github:git:tag:
-    context: powershell
+    context: eir
     description: Tag a Commit in GitHub
     command:
       - |

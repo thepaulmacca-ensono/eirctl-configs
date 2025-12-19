@@ -1,5 +1,5 @@
 contexts:
-  powershell:
+  eir:
     container:
       name: ensono/eir-infrastructure
       container_args:

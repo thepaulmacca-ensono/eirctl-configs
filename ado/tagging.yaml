@@ -2,7 +2,7 @@
 
 tasks:
   ado:git:tag:
-    context: powershell
+    context: eir
     description: Tag a Commit in Azure DevOps
     command:
       - |
@@ -14,7 +14,7 @@ tasks:
         git push origin $tagName
 
   ado:git:release:tag:
-    context: powershell
+    context: eir
     description: Tag a Commit in Azure DevOps for Release
     command:
       - |

@@ -2,13 +2,13 @@
 
 tasks:
   ado:buildnumber:
-    context: powershell
+    context: eir
     description: Update the Build Number in Azure DevOps
     command:
       - Update-BuildNumber
 
   ado:retain:pipeline:
-    context: powershell
+    context: eir
     description: |
       Retain an Azure DevOps pipeline run for a configurable number of years
 

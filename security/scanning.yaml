@@ -2,7 +2,7 @@
 
 tasks:
   scan:terraform:checkov:
-    context: powershell
+    context: eir
     description: Perform Terraform Static Code Analysis using Checkov
     command:
       - |

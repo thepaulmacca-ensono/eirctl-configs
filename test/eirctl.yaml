@@ -2,8 +2,8 @@
 
 import:
   - ../shared/contexts.yaml
-  - ../azure_devops/pipelines.yaml
-  - ../azure_devops/tagging.yaml
+  - ../ado/pipelines.yaml
+  - ../ado/tagging.yaml
   - ../github/tagging.yaml
   - ../infra/terraform.yaml
   - ../security/linting.yaml

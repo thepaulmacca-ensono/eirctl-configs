@@ -1,18 +1,18 @@
-# Eirctl Configuration Files
+# Eirctl Configurations
 
-[![Lint and Test](https://github.com/thepaulmacca-ensono/eirctl-configs/actions/workflows/pr.yml/badge.svg)](https://github.com/thepaulmacca-ensono/eirctl-configs/actions/workflows/pr.yml)
+[![Lint and Test](https://github.com/thepaulmacca-ensono/eirctl-configurations/actions/workflows/pr.yml/badge.svg)](https://github.com/thepaulmacca-ensono/eirctl-configurations/actions/workflows/pr.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Reusable task configurations for [eirctl](https://github.com/Ensono/eirctl) - enabling streamlined CI/CD workflows across Azure DevOps and GitHub pipelines.
 
 ## What is this?
 
-**eirctl-configs** provides pre-built, production-ready task definitions that can be imported directly into your `eirctl` task runner. These configurations cover common DevOps operations including:
+**eirctl-configurations** provides pre-built, production-ready task definitions that can be imported directly into your `eirctl` task runner. These configurations cover common DevOps operations including:
 
 - **Infrastructure as Code** - Terraform formatting, validation, planning, and deployment
 - **Security Scanning** - Static code analysis with Checkov
 - **Pipeline Management** - Azure DevOps pipeline retention policies
-- **Git Operations** - Automated tagging for releases and builds
+- **Git Operations** - Automated tagging for builds and releases
 - **Code Quality** - YAML linting and Terraform documentation generation
 
 ## Features
@@ -36,9 +36,10 @@ Import configurations directly from this repository in your `eirctl.yaml`:
 
 ```yaml
 import:
-  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/shared/contexts.yaml
-  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/infra/terraform.yaml
-  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configs/main/security/scanning.yaml
+  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configurations/main/shared/contexts.yaml
+  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configurations/main/security/linting.yaml
+  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configurations/main/security/scanning.yaml
+  - https://raw.githubusercontent.com/thepaulmacca-ensono/eirctl-configurations/main/infra/terraform.yaml
 ```
 
 > [!TIP]
@@ -47,7 +48,7 @@ import:
 Or clone locally:
 
 ```bash
-git clone https://github.com/thepaulmacca-ensono/eirctl-configs.git
+git clone https://github.com/thepaulmacca-ensono/eirctl-configurations.git
 ```
 
 ### Usage
@@ -94,7 +95,7 @@ eirctl run github:git:tag
 | `lint:yaml` | Perform YAML Linting using Yamllint |
 | `scan:terraform:checkov` | Perform Terraform Static Code Analysis using Checkov |
 
-### Azure DevOps (`azure_devops/`)
+### Azure DevOps (`ado/`)
 
 | Task | Description |
 |------|-------------|
@@ -126,11 +127,11 @@ Common variables used by tasks:
 
 ### Execution Context
 
-Tasks use the shared PowerShell context (`shared/contexts.yaml`) which runs commands in the `ensono/eir-infrastructure` container:
+Tasks use the shared `eir` context (`shared/contexts.yaml`) which runs commands in the `ensono/eir-infrastructure` container:
 
 ```yaml
 contexts:
-  powershell:
+  eir:
     container:
       name: ensono/eir-infrastructure
       container_args:
@@ -143,8 +144,8 @@ contexts:
 ## Project Structure
 
 ```text
-eirctl-configs/
-├── azure_devops/       # Azure DevOps specific tasks
+eirctl-configurations/
+├── ado/                # Azure DevOps specific tasks
 │   ├── pipelines.yaml  # Pipeline management tasks
 │   └── tagging.yaml    # Git tagging for ADO
 ├── github/             # GitHub specific tasks
@@ -162,8 +163,8 @@ eirctl-configs/
 
 ## Getting Help
 
-- 📖 [eirctl Documentation](https://github.com/Ensono/eirctl)
-- 🐛 [Report Issues](https://github.com/thepaulmacca-ensono/eirctl-configs/issues)
+- 📖 [Eirctl Documentation](https://github.com/Ensono/eirctl)
+- 🐛 [Report Issues](https://github.com/thepaulmacca-ensono/eirctl-configurations/issues)
 
 ## Contributing
 

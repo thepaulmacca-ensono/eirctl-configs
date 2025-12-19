@@ -2,7 +2,7 @@
 
 tasks:
   lint:terraform:format:
-    context: powershell
+    context: eir
     description: Perform Terraform Format Check
     command:
       - |
@@ -12,7 +12,7 @@ tasks:
         Invoke-Terraform -Format -Path $env:TF_FILE_LOCATION -Debug
 
   lint:terraform:validate:
-    context: powershell
+    context: eir
     description: Perform Terraform Validation
     command:
       - |
@@ -22,7 +22,7 @@ tasks:
         Invoke-Terraform -Validate -Path $env:TF_FILE_LOCATION
 
   lint:terraform:tflint:
-    context: powershell
+    context: eir
     description: Perform Terraform Linting using TFLint
     command:
       - |
@@ -33,7 +33,7 @@ tasks:
         tflint --chdir=$env:TF_FILE_LOCATION
 
   terraform:init:
-    context: powershell
+    context: eir
     description: Initialise Terraform
     command: |
       Invoke-Terraform -Init -Path $env:TF_FILE_LOCATION -Arguments $env:TF_BACKEND_INIT -Debug
@@ -41,7 +41,7 @@ tasks:
       Invoke-Terraform -Workspace -Path $env:TF_FILE_LOCATION -Arguments $env:ENVIRONMENT_NAME -Debug
 
   terraform:plan:
-    context: powershell
+    context: eir
     description: Terraform Plan
     command:
       - |
@@ -54,7 +54,7 @@ tasks:
         Invoke-Terraform -Plan -Path $env:TF_FILE_LOCATION -Arguments $arguments
 
   terraform:apply:
-    context: powershell
+    context: eir
     description: Apply Terraform Plan
     command: |
       Push-Location $env:TF_FILE_LOCATION
@@ -64,7 +64,7 @@ tasks:
       terraform output -json | Set-Content -Path ./tfoutputs.json -Force
 
   terraform:destroy:plan:
-    context: powershell
+    context: eir
     description: Terraform Destroy Plan
     command:
       - |
@@ -77,7 +77,7 @@ tasks:
         Invoke-Terraform -Plan -Path $env:TF_FILE_LOCATION -Arguments $arguments -Debug
 
   terraform:destroy:apply:
-    context: powershell
+    context: eir
     description: Terraform Destroy Apply
     command:
       - |
@@ -86,11 +86,11 @@ tasks:
         Invoke-Terraform -Apply -Path destroy.tfplan -Debug
 
   terraform:ado:outputs:
-    context: powershell
+    context: eir
     description: Get Terraform Outputs for ADO Variable Group Import
     command:
       - |
-        build/powershell/Set-VariableGroupFromOutputs.ps1 `
+        build/eir/Set-VariableGroupFromOutputs.ps1 `
           -organisationName $env:ADO_ORGANISATION `
           -projectName $env:ADO_PROJECT `
           -accessToken $env:ADO_ACCESS_TOKEN `
@@ -99,7 +99,7 @@ tasks:
           -variableNamePrefix $env:ADO_VARIABLE_NAME_PREFIX
 
   doc:terraform:generate:
-    context: powershell
+    context: eir
     description: Generate Terraform Module Documentation
     command:
       - |
